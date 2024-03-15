@@ -1,52 +1,93 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAllPosts, deletePost, updatePost } from './postsSlice';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { deletePost, updatePost } from './postsSlice';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
 import ReactionButtons from './ReactionButtons';
 
-const PostList = () => {
+function PostList() {
+    const posts = useSelector(state => state.posts);
     const dispatch = useDispatch();
-    const posts = useSelector(selectAllPosts);
+    const [editId, setEditId] = useState(null);
+    const [editTitle, setEditTitle] = useState('');
+    const [editContent, setEditContent] = useState('');
 
-    const orderedPosts = posts.slice().sort((a,b)=>b.date.localeCompare(a.date))
-
-    const handleDeletePost = (postId) => {
-        dispatch(deletePost(postId));
+    const handleEdit = (id, title, content) => {
+        setEditId(id);
+        setEditTitle(title);
+        setEditContent(content);
     };
 
-    const handleUpdatePost = (postId, title, content) => {
-        dispatch(updatePost({ id: postId, title, content }));
+    const handleUpdate = (id) => {
+        dispatch(updatePost({ id, title: editTitle, content: editContent }));
+        setEditId(null);
+        setEditTitle('');
+        setEditContent('');
     };
-
-    const renderedPosts = orderedPosts.map(post => {
-
-            return (
-                <article key={post.id} className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">{post.title}</h3>
-                    <p className="text-gray-700 text-xl">{post.content.substring(0,100)}</p>
-                    <p className='text-sm'><PostAuthor userId={post.userId}/>
-                    <TimeAgo timestamp={post.date}/></p>
-                    <ReactionButtons post={post}/>
-                    <button onClick={() => handleDeletePost(post.id)}>Delete</button>
-                    <button onClick={() => handleUpdatePost(post.id, 'Updated Title', 'Updated Content')}>Update</button>
-                </article>
-            );
-       
-    });
 
     return (
-        <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen">
-            <div className="container mx-auto px-4">
-                <section className="pt-12 pb-8">
-                    <h2 className="text-4xl font-bold text-blue-900 mb-8">Posts</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {renderedPosts}
-                    </div>
-                </section>
-            </div>
+        <div className="container mx-auto px-4">
+            {posts.map(post => (
+                <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    {editId === post.id ? (
+                        <>
+                            <input
+                                type="text"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                className="border rounded-lg px-4 py-2 w-full mb-4"
+                                placeholder="Enter title"
+                            />
+                            <textarea
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                className="border rounded-lg px-4 py-2 w-full mb-4 h-40"
+                                placeholder="Enter content"
+                            />
+                            <div className="flex justify-between">
+                                <button
+                                    onClick={() => handleUpdate(post.id)}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                >
+                                    Update
+                                </button>
+                                <button
+                                    onClick={() => setEditId(null)}
+                                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{post.title}</h3>
+                            <p className="text-gray-700 text-lg mb-2">{post.content}</p>
+                            <div className="flex justify-between mb-4">
+                                <PostAuthor userId={post.userId} />
+                                <TimeAgo timestamp={post.date} />
+                            </div>
+                            <ReactionButtons post={post} />
+                            <div className="flex justify-between mt-4">
+                                <button
+                                    onClick={() => handleEdit(post.id, post.title, post.content)}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => dispatch(deletePost(post.id))}
+                                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
+            ))}
         </div>
     );
-};
+}
 
 export default PostList;
