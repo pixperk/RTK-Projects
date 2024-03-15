@@ -7,6 +7,8 @@ import ReactionButtons from './ReactionButtons';
 
 function PostList() {
     const posts = useSelector(state => state.posts);
+
+    const orderedPosts = posts.slice().sort((a,b)=>b.date.localeCompare(a.date))
     const dispatch = useDispatch();
     const [editId, setEditId] = useState(null);
     const [editTitle, setEditTitle] = useState('');
@@ -27,7 +29,7 @@ function PostList() {
 
     return (
         <div className="container mx-auto px-4">
-            {posts.map(post => (
+            {orderedPosts.map(post => (
                 <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 mb-6">
                     {editId === post.id ? (
                         <>
