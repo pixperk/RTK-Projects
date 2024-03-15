@@ -5,7 +5,7 @@ import AddPost from './features/posts/AddPost'
 function App() {
   return (
     <div>
-     <h1 className='font-bold bg-blue-200'>Bulletin</h1> 
+     <h1 className='font-bold text-center bg-blue-200'>Bulletin</h1> 
     
      <AddPost/>
      <PostList/>
