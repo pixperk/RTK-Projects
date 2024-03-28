@@ -13,6 +13,7 @@ const initialState = JSON.parse(localStorage.getItem("posts")) || [
       heart: 0,
       rocket: 0,
       coffee: 0,
+      chai:0
     },
   },
   {
@@ -26,6 +27,7 @@ const initialState = JSON.parse(localStorage.getItem("posts")) || [
       heart: 0,
       rocket: 0,
       coffee: 0,
+      chai:0
     },
   },
 ];
@@ -52,6 +54,7 @@ const postsSlice = createSlice({
             heart: 0,
             rocket: 0,
             coffee: 0,
+            chai: 0
           },
         },
       }),

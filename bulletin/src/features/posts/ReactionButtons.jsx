@@ -7,7 +7,8 @@ const reactionEmoji = {
     wow: '😮',
     heart: '❤️',
     rocket: '🚀',
-    coffee: '☕'
+    coffee: '☕',
+    chai: '🍵'
 };
 
 const ReactionButtons = ({ post }) => {
